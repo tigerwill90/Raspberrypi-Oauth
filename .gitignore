@@ -1,0 +1,5 @@
+/src/vendor/
+*.log
+.env
+composer.lock
+.idea/

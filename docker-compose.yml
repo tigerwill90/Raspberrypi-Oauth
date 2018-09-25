@@ -1,0 +1,23 @@
+version: '3'
+services:
+  weatherservice:
+    privileged: true
+    build:
+      context: .
+      args:
+        - CA_COUNTRY=${CA_COUNTRY}
+        - CA_STATE=${CA_STATE}
+        - CA_LOCALITY=${CA_LOCALITY}
+        - CA_ORGANIZATION=${CA_ORGANIZATION}
+        - CA_ORGANIZATIONUNIT=${CA_ORGANIZATIONUNIT}
+        - CA_COMMON=${VIRTUAL_HOST}
+    container_name: weatherservice
+    ports:
+      - ${PORT}:80
+      - ${SLLPORT}:443
+    restart: always
+    volumes:
+      - ./src:/var/www/html
+      - ./logs/apache2:/var/log/apache2
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
