@@ -38,11 +38,7 @@
             try {
                 $param = $result->decode_response();
                 if ($param->active) {
-
-                    //$gpio = new \PhpGpio\Gpio();
-                    //$gpio->setup(17, 'in');
-
-                    $body->write(json_encode(['messages' => '30mm de pluie ']));
+                    $body->write(json_encode(['messages' => '30mm de pluie']));
                 } else {
                     $body->write(json_encode(['error' => 'access denied']));
                     return $response->withBody($body)->withHeader('content-type' ,'application/json')->withStatus(401);
