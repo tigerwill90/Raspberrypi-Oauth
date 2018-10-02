@@ -4,7 +4,7 @@
 ###
 ###
 
-FROM php:7.2.9-apache
+FROM php:7.2.10-apache-stretch
 MAINTAINER "tigerwill90" <sylvain.muller90@gmail.com>
 
 ENV USER="raspuser" \
