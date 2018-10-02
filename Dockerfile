@@ -7,17 +7,26 @@
 FROM php:7.2.9-apache
 MAINTAINER "tigerwill90" <sylvain.muller90@gmail.com>
 
-ENV USER=www-data
-ENV GROUP=www-data
+ENV USER="raspuser" \
+    GROUP="raspuser" \
+    UID="1000" \
+    GID="1000"
 
-ARG CA_COUNTRY=CH
-ARG CA_STATE=Geneva
-ARG CA_LOCALITY=Geneva
-ARG CA_ORGANIZATION=Spectre\ inc
-ARG CA_ORGANIZATIONUNIT=R&D
-ARG CA_COMMON=oauth.xyz
+ARG CA_COUNTRY="CH"
+ARG CA_STATE="Geneva"
+ARG CA_LOCALITY="Geneva"
+ARG CA_ORGANIZATION="Spectre inc"
+ARG CA_ORGANIZATIONUNIT="R&D"
+ARG CA_COMMON="oauth.xyz"
 
 ADD /src /var/www/html
+
+###
+### User/Group
+###
+RUN set -x \
+	&& groupadd -g ${GID} -r ${GROUP} \
+	&& useradd -u ${UID} -m -s /bin/bash -g ${GROUP} ${USER}
 
 ###
 ### Install tools
@@ -27,7 +36,10 @@ RUN set -x \
         && apt-get install --no-install-recommends --no-install-suggests -y \
                 git \
                 make \
-                wget
+                wget \
+                zip \
+                unzip
+
 
 ###
 ### Install php extension
@@ -52,6 +64,9 @@ RUN set -x \
         && git clone --branch php7 https://github.com/php-memcached-dev/php-memcached /usr/src/php/ext/memcached/ \
         && docker-php-ext-install memcached \
         && docker-php-ext-enable memcached \
+        \
+        && docker-php-ext-install zip \
+        && docker-php-ext-enable zip \
         \
         && ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/ \
         && docker-php-ext-install gmp \
@@ -85,7 +100,6 @@ RUN set -x \
 ###
 ### Install composer
 ###
-ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN set -x \
   && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
   && composer self-update
@@ -101,11 +115,12 @@ ADD /vhost/vhost.conf /etc/apache2/sites-available
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem -subj "/C=$CA_COUNTRY/ST=$CA_STATE/L=$CA_LOCALITY/O=$CA_ORGANIZATION/OU=$CA_ORGANIZATIONUNIT/CN=$CA_COMMON"
 
 ###
-### Configure ssl 
+### Configure ssl
 ###
-RUN a2enmod rewrite
-RUN a2ensite default-ssl
-RUN a2enmod ssl
+RUN set -x \
+    && a2enmod rewrite \
+    && a2ensite default-ssl \
+    && a2enmod ssl
 
 ###
 ### Override default vhost conf
@@ -126,7 +141,7 @@ RUN set -x \
   && chmod -R 777 /var/www/html/logs \
   && chown -R ${USER}:${GROUP} /var/www/html
 
-RUN service apache2 restart
+RUN set -x service apache2 restart
 
 VOLUME /var/www/html
 

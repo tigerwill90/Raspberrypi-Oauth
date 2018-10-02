@@ -17,11 +17,11 @@ install : build update
 	cp src/.env.example src/$(ENV)
 
 update :
-	docker-compose exec httpd composer update --prefer-dist
+	docker-compose exec -u raspuser httpd composer update --prefer-dist
 	make autoload
 
 autoload :
-	docker-compose exec httpd composer dump-autoload -o
+	docker-compose exec -u raspuser httpd composer dump-autoload -o
 
 build : virtual
 	docker-compose down
