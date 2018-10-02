@@ -23,10 +23,6 @@
     "ext-curl" : "*",
     "slim/slim" : "^3.10",
     "vlucas/phpdotenv": "^2.5",
-    "web-token/jwt-core": "^1.1",
-    "web-token/jwt-checker": "^1.1",
-    "web-token/jwt-signature": "^1.1",
-    "web-token/jwt-encryption": "^1.1",
     "tcdent/php-restclient": "^0.1.7",
     "ronanguilloux/php-gpio": "^1.0"
   },

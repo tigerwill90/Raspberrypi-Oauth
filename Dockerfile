@@ -68,7 +68,6 @@ RUN set -x \
         && docker-php-ext-install zip \
         && docker-php-ext-enable zip \
         \
-        && ln /usr/include/x86_64-linux-gnu/gmp.h /usr/include/ \
         && docker-php-ext-install gmp \
         && docker-php-ext-enable gmp \
         \
@@ -89,13 +88,6 @@ RUN set -x \
         \
         #clean-up
         && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $buildDeps
-
-###
-### Install PDO
-###
-RUN set -x \
-   && docker-php-ext-install pdo_mysql \
-   && docker-php-ext-enable pdo_mysql
 
 ###
 ### Install composer
