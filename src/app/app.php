@@ -38,7 +38,10 @@
             try {
                 $param = $result->decode_response();
                 if ($param->active) {
-                    $body->write(json_encode(['messages' => '30mm de pluie']));
+                    $factory = new \RandomLib\Factory();
+                    $factory = $factory->getGenerator(new \SecurityLib\Strength(\SecurityLib\Strength::MEDIUM));
+                    $random = $factory->generateString(15, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+                    $body->write(json_encode(['messages' => $random]));
                 } else {
                     $body->write(json_encode(['error' => 'access denied']));
                     return $response->withBody($body)->withHeader('content-type' ,'application/json')->withStatus(401);
